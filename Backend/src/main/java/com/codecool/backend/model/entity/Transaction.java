@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Data
 @Entity
@@ -19,9 +20,14 @@ public class Transaction {
     private Long id;
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "transaction_category", // pivot table name
+            joinColumns = @JoinColumn(name = "transaction_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+
+    private Set<Category> categories;
 
     private int amount;
 
@@ -29,18 +35,22 @@ public class Transaction {
     @JoinColumn(referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_member_transaction"), nullable = false)
     private UserEntity userEntity;
 
+    @ManyToOne
+    @JoinColumn(name = "house_id")
+    private Household household;
+
     // Add date for transaction
     private java.time.LocalDate date;
 
     public Transaction() {
     }
 
-    public Transaction(Long id, String name, Category category, int amount, UserEntity member) {
+    public Transaction(Long id, String name, Set<Category> categories, int amount, UserEntity userEntity) {
         this.id = id;
         this.name = name;
-        this.category = category;
+        this.categories = categories;
         this.amount = amount;
-        this.userEntity = member;
+        this.userEntity = userEntity;
     }
 
     public Transaction(TransactionDto dto) {
@@ -58,7 +68,7 @@ public class Transaction {
         return "Transaction{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", category=" + category +
+                ", category=" + categories +
                 ", amount=" + amount +
                 ", date=" + date +
                 '}';
@@ -71,11 +81,11 @@ public class Transaction {
         Transaction that = (Transaction) o;
         return id.equals(that.id) && amount == that.amount &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(category, that.category);
+                Objects.equals(categories, that.categories);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, category, amount);
+        return Objects.hash(id, name, categories, amount);
     }
 }
