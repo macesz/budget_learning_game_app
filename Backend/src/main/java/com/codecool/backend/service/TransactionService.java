@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -67,17 +68,24 @@ public class TransactionService {
         UserEntity userEntity = userRepository.findUserEntityByEmail(email)
                 .orElseThrow(UserEntityNotFoundException::new);
 
-        Category category = categoryRepository.getCategoryById(transactionDto.categoryId())
-                .orElseThrow(CategoryNotFoundException::new);
+        assert transactionDto.categoryIds() != null;
+        Set<Category> categories = new HashSet<>(categoryRepository.findAllById(transactionDto.categoryIds()));
+
+        if (categories.isEmpty()) {
+            throw new CategoryNotFoundException();
+        }
+
         LocalDate date = LocalDate.now();
         Transaction transaction = new Transaction(transactionDto);
-        transaction.setUserEntity(userEntity);
-        transaction.setCategory(category);
-        transaction.setDate(date);
+        transaction.setUserEntity(userEntity); // Changed from setMember to setUserEntity
+        transaction.setCategories(categories);
+        transaction.setDate(LocalDate.now());
+        transaction.setHousehold(userEntity.getHousehold()); // Set house from user
+
         return transactionRepository.save(transaction).getId();
     }
 
-    public List<TransactionDto> getTransactionByGategory(Category category) {
+    public List<TransactionDto> getTransactionByCategory(Category category) {
 
         List<Transaction> transactions = new ArrayList<>();
 
@@ -91,7 +99,16 @@ public class TransactionService {
 
     public TransactionDto getTransactionById(int id) {
         return transactionRepository.getTransactionById(id)
-                .map(transaction -> new TransactionDto(transaction.getId(), transaction.getName(), transaction.getCategory(), transaction.getAmount(), transaction.getUserEntity().getId(), transaction.getDate()
+                .map(transaction -> new TransactionDto(
+                        transaction.getId(),
+                        transaction.getName(),
+                        transaction.getCategories().stream()  // Convert Category to CategoryDto
+                                .map(CategoryDto::new)
+                                .collect(Collectors.toSet()),
+                        transaction.getAmount(),
+                        transaction.getUserEntity().getId(),
+                        transaction.getHousehold() != null ? transaction.getHousehold().getId() : null,  // Add the missing houseId parameter
+                        transaction.getDate()
                 )).orElseThrow(NoSuchElementException::new);
     }
 

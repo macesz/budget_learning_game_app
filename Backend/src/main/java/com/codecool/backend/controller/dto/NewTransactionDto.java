@@ -1,4 +1,6 @@
 package com.codecool.backend.controller.dto;
 
-public record NewTransactionDto(String name, Long categoryId, int amount) {
+import java.util.List;
+
+public record NewTransactionDto(String name, List<Long> categoryIds, int amount) {
 }

@@ -48,7 +48,7 @@ public class TransactionController {
 
     @GetMapping("/{category}")
     public List<TransactionDto> getTransactionById(@PathVariable Category category) {
-        return transactionService.getTransactionByGategory(category);
+        return transactionService.getTransactionByCategory(category);
     }
 
     @GetMapping("/{id}/avrg")
