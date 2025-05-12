@@ -7,18 +7,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    Optional<List<Transaction>> getTransactionsByCategory(Category category);
+    Optional<List<Transaction>> findByCategories_Id(Long categoryId);
 
-    Optional<Transaction> getTransactionById(int id);
+    Optional<Transaction> getTransactionById(Long id);
 
-    boolean deleteTransactionById(int id);
+    Optional<List<Transaction>> findByCategoriesIn(Collection<Category> categories);
 
-    Optional<List<Transaction>> getAllByCategoryId(int categoryId);
+
+    boolean deleteTransactionById(Long id);
 
     Optional<List<Transaction>> getAllByUserEntityAndDateAfter(UserEntity userEntity, LocalDate startDate);
 

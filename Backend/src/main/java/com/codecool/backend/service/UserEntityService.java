@@ -43,7 +43,7 @@ public class UserEntityService {
     }
 
     public UserEntityDto getMember(int id) {
-        UserEntity member = userEntityRepository.getUserEntityById(id)
+        UserEntity member = userEntityRepository.getUserById(id)
                 .orElseThrow(UserEntityNotFoundException::new);
         return new UserEntityDto(member);
     }
@@ -58,11 +58,11 @@ public class UserEntityService {
     }
 
     public UserEntity findMemberByEmail(String email){
-        return userEntityRepository.findUserEntityByEmail(email).orElse(null);
+        return userEntityRepository.findUserByEmail(email).orElse(null);
     }
 
     public int getMySaving(String email) {
-        UserEntity member = userEntityRepository.findUserEntityByEmail(email)
+        UserEntity member = userEntityRepository.findUserByEmail(email)
                 .orElseThrow(UserEntityNotFoundException::new);
         List<Transaction> transactions = transactionRepository.getAllByUserEntity(member).orElse(null);
         assert transactions != null;
