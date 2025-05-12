@@ -49,7 +49,7 @@ public class TransactionService {
 
     public List<TransactionDto> getAllByUserEntity(String email, LocalDate startDate) {
 
-        UserEntity userEntity = userRepository.findUserEntityByEmail(email)
+        UserEntity userEntity = userRepository.findUserByEmail(email)
                 .orElseThrow(UserEntityNotFoundException::new);
         List<Transaction> transactions = new ArrayList<>();
         if(startDate == null){
@@ -65,7 +65,7 @@ public class TransactionService {
     }
 
     public Long createTransaction(String email,NewTransactionDto transactionDto) {
-        UserEntity userEntity = userRepository.findUserEntityByEmail(email)
+        UserEntity userEntity = userRepository.findUserByEmail(email)
                 .orElseThrow(UserEntityNotFoundException::new);
 
         assert transactionDto.categoryIds() != null;
@@ -85,19 +85,35 @@ public class TransactionService {
         return transactionRepository.save(transaction).getId();
     }
 
-    public List<TransactionDto> getTransactionByCategory(Category category) {
-
-        List<Transaction> transactions = new ArrayList<>();
-
-        transactions = transactionRepository.getTransactionsByCategory(category)
-                    .orElseThrow(TransactionNotFoundException::new);
+    public List<TransactionDto> getTransactionsByCategories(Collection<Category> categories) {
+        List<Transaction> transactions = transactionRepository.findByCategoriesIn(categories)
+                .orElseThrow(TransactionNotFoundException::new);
 
         return transactions.stream()
                 .map(TransactionDto::new)
                 .toList();
     }
 
-    public TransactionDto getTransactionById(int id) {
+    // Overloaded method for single category
+    public List<TransactionDto> getTransactionByCategory(Category category) {
+        return getTransactionsByCategories(Collections.singleton(category));
+    }
+
+    public List<TransactionDto> getTransactionsByCategoryId(Long categoryId) {
+        // Optional: Check if the category exists
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new CategoryNotFoundException();
+        }
+
+        // Use the new repository method
+        return transactionRepository.findByCategories_Id(categoryId)
+                .orElse(List.of())  // Return empty list if no transactions found
+                .stream()
+                .map(TransactionDto::new)  // Using the constructor that takes Transaction
+                .collect(Collectors.toList());
+    }
+
+    public TransactionDto getTransactionById(Long id) {
         return transactionRepository.getTransactionById(id)
                 .map(transaction -> new TransactionDto(
                         transaction.getId(),
@@ -118,20 +134,20 @@ public class TransactionService {
         return true;
     }
 
-    public boolean deleteTransaction(int id) {
+    public boolean deleteTransaction(Long id) {
         return transactionRepository.deleteTransactionById(id);
     }
 
-    public int getSumOfTransactionByCategoryId(int categoryId) {
-        List<Transaction> transactions = transactionRepository.getAllByCategoryId(categoryId)
+    public int getSumOfTransactionByCategoryId(Long categoryId) {
+        List<Transaction> transactions = transactionRepository.findByCategories_Id(categoryId)
                 .orElseThrow(TransactionNotFoundException::new);
         return transactions.stream()
                 .mapToInt(Transaction::getAmount)
                 .sum();
     }
 
-    public OptionalDouble getAvgSpendingByCategoryId(int categoryId) {
-        List<Transaction> transactions = transactionRepository.getAllByCategoryId(categoryId)
+    public OptionalDouble getAvgSpendingByCategoryId(Long categoryId) {
+        List<Transaction> transactions = transactionRepository.findByCategories_Id(categoryId)
                 .orElseThrow(TransactionNotFoundException::new);
         return transactions.stream()
                 .mapToInt(Transaction::getAmount)

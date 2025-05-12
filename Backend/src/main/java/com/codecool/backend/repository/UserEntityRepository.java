@@ -10,11 +10,11 @@ import java.util.Optional;
 public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
     boolean deleteUserEntityById(int id);
 
-    Optional<UserEntity> getUserEntityById(int id);
+    Optional<UserEntity> getUserById(int id);
 
-    Optional<UserEntity> getUserEntityByEmailAndPassword(String email, String password);
+    Optional<UserEntity> getUserByEmailAndPassword(String email, String password);
 
-    Optional<UserEntity> findUserEntityByName(String username);
+    Optional<UserEntity> findUserByName(String username);
 
-    Optional<UserEntity> findUserEntityByEmail(String email);
+    Optional<UserEntity> findUserByEmail(String email);
 }

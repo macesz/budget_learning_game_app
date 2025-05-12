@@ -42,22 +42,27 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
-    public TransactionDto getTransactionById(@PathVariable int id) {
+    public TransactionDto getTransactionById(@PathVariable Long id) {
         return transactionService.getTransactionById(id);
     }
 
     @GetMapping("/{category}")
-    public List<TransactionDto> getTransactionById(@PathVariable Category category) {
+    public List<TransactionDto> getTransactionByCategoryId(@PathVariable Category category) {
         return transactionService.getTransactionByCategory(category);
     }
 
+    @GetMapping("/{categoryId}")
+    public List<TransactionDto> getTransactionsByCategoryId(@PathVariable Long categoryId) {
+        return transactionService.getTransactionsByCategoryId(categoryId);
+    }
+
     @GetMapping("/{id}/avrg")
-    public OptionalDouble getAverageTransactions(@PathVariable int id) {
+    public OptionalDouble getAverageTransactions(@PathVariable Long id) {
         return transactionService.getAvgSpendingByCategoryId(id);
     }
 
     @GetMapping("/{id}/sum")
-    public int getSumOfTransactionByCategoryId(@PathVariable int id) {
+    public int getSumOfTransactionByCategoryId(@PathVariable Long id) {
       return transactionService.getSumOfTransactionByCategoryId(id);
     }
 
@@ -73,7 +78,7 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteTransaction( @PathVariable int id) {
+    public boolean deleteTransaction( @PathVariable Long id) {
         return transactionService.deleteTransaction(id);
     }
 
