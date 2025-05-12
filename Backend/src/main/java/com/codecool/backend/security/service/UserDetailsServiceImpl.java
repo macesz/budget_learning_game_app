@@ -1,9 +1,9 @@
 package com.codecool.backend.security.service;
 
 
-import com.codecool.backend.model.Member;
-import com.codecool.backend.model.Role;
-import com.codecool.backend.repository.MemberRepository;
+import com.codecool.backend.model.entity.UserEntity;
+import com.codecool.backend.model.entity.Role;
+import com.codecool.backend.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -18,17 +18,17 @@ import java.util.List;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final MemberRepository memberRepository;
+    private final UserEntityRepository memberRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(MemberRepository memberRepository) {
+    public UserDetailsServiceImpl(UserEntityRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
-        Member member = memberRepository.findMemberByEmail(email)
+        UserEntity member = memberRepository.findUserEntityByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
 
         List<SimpleGrantedAuthority> roles = new ArrayList<>();

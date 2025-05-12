@@ -1,6 +1,6 @@
 package com.codecool.backend.controller;
 
-import com.codecool.backend.controller.exception.MemberNotFoundException;
+import com.codecool.backend.controller.exception.UserEntityNotFoundException;
 
 import com.codecool.backend.controller.exception.TransactionNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @RestControllerAdvice
 public class PokeControllerAdvice {
     @ResponseBody
-    @ExceptionHandler(MemberNotFoundException.class)
+    @ExceptionHandler(UserEntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String memberNotFoundExceptionHandler(MemberNotFoundException ex) {
+    public String memberNotFoundExceptionHandler(UserEntityNotFoundException ex) {
         return ex.getMessage();
     }
 

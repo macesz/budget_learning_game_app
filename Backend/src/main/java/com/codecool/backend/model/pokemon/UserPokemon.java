@@ -1,5 +1,5 @@
 package com.codecool.backend.model.pokemon;
-import com.codecool.backend.model.Member;
+import com.codecool.backend.model.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -40,7 +40,7 @@ public class UserPokemon {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Member user;
+    private UserEntity user;
 
     @Column(name = "experience", nullable = false)
     private Integer experience;

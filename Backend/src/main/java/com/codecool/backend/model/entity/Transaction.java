@@ -1,4 +1,4 @@
-package com.codecool.backend.model;
+package com.codecool.backend.model.entity;
 
 import com.codecool.backend.controller.dto.NewTransactionDto;
 import com.codecool.backend.controller.dto.TransactionDto;
@@ -25,9 +25,9 @@ public class Transaction {
 
     private int amount;
 
-    @ManyToOne
+    @ManyToOne ///  many to many
     @JoinColumn(referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_member_transaction"), nullable = false)
-    private Member member;
+    private UserEntity userEntity;
 
     // Add date for transaction
     private java.time.LocalDate date;
@@ -35,12 +35,12 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(Long id, String name, Category category, int amount, Member member) {
+    public Transaction(Long id, String name, Category category, int amount, UserEntity member) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.amount = amount;
-        this.member = member;
+        this.userEntity = member;
     }
 
     public Transaction(TransactionDto dto) {

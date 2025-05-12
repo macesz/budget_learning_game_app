@@ -1,4 +1,4 @@
-package com.codecool.backend.model;
+package com.codecool.backend.model.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -18,6 +18,8 @@ public class Category {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private CategoryType type;
+
+    // add member id as all members can have own lables of categories
 
     private String description;
 

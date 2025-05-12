@@ -1,13 +1,12 @@
 package com.codecool.backend.repository;
 
-import com.codecool.backend.model.Category;
-import com.codecool.backend.model.Member;
-import com.codecool.backend.model.Transaction;
+import com.codecool.backend.model.entity.Category;
+import com.codecool.backend.model.entity.UserEntity;
+import com.codecool.backend.model.entity.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     Optional<List<Transaction>> getAllByCategoryId(int categoryId);
 
-    Optional<List<Transaction>> getAllByMemberAndDateAfter(Member member, LocalDate startDate);
+    Optional<List<Transaction>> getAllByUserEntityAndDateAfter(UserEntity userEntity, LocalDate startDate);
 
-    Optional<List<Transaction>> getAllByMember(Member member);
+    Optional<List<Transaction>> getAllByUserEntity(UserEntity userEntity);
 }

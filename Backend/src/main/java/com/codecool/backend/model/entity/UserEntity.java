@@ -1,11 +1,9 @@
-package com.codecool.backend.model;
+package com.codecool.backend.model.entity;
 
-import com.codecool.backend.controller.dto.MemberDto;
-import com.codecool.backend.controller.dto.MemberRegistrationDto;
+import com.codecool.backend.controller.dto.UserEntityDto;
+import com.codecool.backend.controller.dto.UserEntityRegistrationDto;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,7 +13,7 @@ import java.util.Set;
 @Data
 @Entity
 @SequenceGenerator(name="seq", initialValue=2, allocationSize=100)
-public class Member {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq")
@@ -33,17 +31,19 @@ public class Member {
     @Column(nullable = false)
     private BigDecimal targetAmount;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "userEntity")
     private List<Transaction> transactions;
 
-    public Member() {
+    // join category with member
+
+    public UserEntity() {
     }
 
-    public Member(String name) {
+    public UserEntity(String name) {
         this.name = name;
     }
 
-    public Member(MemberRegistrationDto memberRegistrationDto) {
+    public UserEntity(UserEntityRegistrationDto memberRegistrationDto) {
         name = memberRegistrationDto.name();
         email = memberRegistrationDto.email();
         password = memberRegistrationDto.password();
@@ -51,7 +51,7 @@ public class Member {
 
 
 
-    public Member(MemberDto userDto) {
+    public UserEntity(UserEntityDto userDto) {
         id = userDto.id();
         name = userDto.name();
         email = userDto.email();
@@ -70,7 +70,7 @@ public class Member {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Member member = (Member) o;
+        UserEntity member = (UserEntity) o;
         return id == member.id
                 && Objects.equals(name, member.name)
                 && Objects.equals(email, member.email);

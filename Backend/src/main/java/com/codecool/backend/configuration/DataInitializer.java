@@ -1,5 +1,5 @@
 package com.codecool.backend.configuration;
-import com.codecool.backend.model.Category;
+import com.codecool.backend.model.entity.Category;
 import com.codecool.backend.repository.CategoryRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

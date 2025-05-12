@@ -1,12 +1,10 @@
 package com.codecool.backend.controller;
 
 import com.codecool.backend.controller.dto.*;
-import com.codecool.backend.model.Member;
 import com.codecool.backend.security.jwt.JwtUtils;
-import com.codecool.backend.service.MemberService;
+import com.codecool.backend.service.UserEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,23 +19,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
-public class MemberController {
+public class UserEntityController {
 
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    private final MemberService memberService;
+    private final UserEntityService userEntityService;
 
     @Autowired
-    public MemberController(MemberService memberService, PasswordEncoder encoder, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
-        this.memberService = memberService;
+    public UserEntityController(UserEntityService memberService, PasswordEncoder encoder, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+        this.userEntityService = memberService;
         this.encoder = encoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody MemberCredentialsDto loginRequest) {
+    public ResponseEntity<?> login(@RequestBody UserEntitySignInDto loginRequest) {
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
@@ -48,38 +46,38 @@ public class MemberController {
         User userDetails = (User) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .toList();
-        Member loggedMember = memberService.findMemberByEmail(userDetails.getUsername());
+        com.codecool.backend.model.entity.UserEntity loggedMember = userEntityService.findMemberByEmail(userDetails.getUsername());
         return ResponseEntity
                 .ok(new JwtResponse(jwt, loggedMember.getName(), roles));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> createUser(@RequestBody MemberRegistrationDto signUpRequest) {
+    public ResponseEntity<Void> createUser(@RequestBody UserEntityRegistrationDto signUpRequest) {
 
-            return memberService.register(signUpRequest, encoder);
+            return userEntityService.register(signUpRequest, encoder);
     }
 
     @GetMapping("/profile")
 //    @PreAuthorize("isAuthenticated()")
-    public MemberProfileDto getProfile() {
+    public UserEntityProfileDto getProfile() {
         // Get current authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
 
         // Get the member associated with the email
-        Member currentMember = memberService.findMemberByEmail(currentUserEmail);
+        com.codecool.backend.model.entity.UserEntity currentMember = userEntityService.findMemberByEmail(currentUserEmail);
 
-        return new MemberProfileDto(currentMember.getId(), currentMember.getName(), currentMember.getEmail(), currentMember.getTargetAmount());
+        return new UserEntityProfileDto(currentMember.getId(), currentMember.getName(), currentMember.getEmail(), currentMember.getTargetAmount());
     }
 
     @GetMapping("/{id}")
-    public MemberDto getUser(@PathVariable int id) {
-        return memberService.getMember(id);
+    public UserEntityDto getUser(@PathVariable int id) {
+        return userEntityService.getMember(id);
     }
 
     @DeleteMapping("/{id}")
     public boolean deleteUser(@PathVariable int id) {
-        return memberService.deleteMember(id);
+        return userEntityService.deleteMember(id);
     }
 
 
@@ -88,7 +86,7 @@ public class MemberController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
 
-        Member currentMember = memberService.findMemberByEmail(currentUserEmail);
+        com.codecool.backend.model.entity.UserEntity currentMember = userEntityService.findMemberByEmail(currentUserEmail);
 
         if(profileDto.currentPassword() != null && !profileDto.currentPassword().isEmpty()
                 && profileDto.newPassword() != null && !profileDto.newPassword().isEmpty()) {
@@ -108,7 +106,7 @@ public class MemberController {
             currentMember.setTargetAmount(profileDto.newTargetAmount());
         }
 
-        boolean updated = memberService.updateMember(currentMember);
+        boolean updated = userEntityService.updateMember(currentMember);
         if (updated) {
             return ResponseEntity.ok().build();
         } else {
@@ -125,6 +123,6 @@ public class MemberController {
     @GetMapping("/savings")
     public int getMySavings(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return memberService.getMySaving(user.getUsername());
+        return userEntityService.getMySaving(user.getUsername());
     }
 }

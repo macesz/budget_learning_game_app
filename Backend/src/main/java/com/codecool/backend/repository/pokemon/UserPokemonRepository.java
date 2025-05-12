@@ -1,6 +1,5 @@
 package com.codecool.backend.repository.pokemon;
 
-import com.codecool.backend.model.Member;
 import com.codecool.backend.model.pokemon.UserPokemon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
