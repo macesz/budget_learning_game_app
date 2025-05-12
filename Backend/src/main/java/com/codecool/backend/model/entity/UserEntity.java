@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -31,10 +30,12 @@ public class UserEntity {
     @Column(nullable = false)
     private BigDecimal targetAmount;
 
-    @OneToMany(mappedBy = "userEntity")
-    private List<Transaction> transactions;
+    @ManyToMany(mappedBy = "categories")
+    private Set<Transaction> transactions;
 
-    // join category with member
+    @ManyToOne
+    @JoinColumn(name = "house_id")
+    private Household household;
 
     public UserEntity() {
     }
@@ -43,18 +44,16 @@ public class UserEntity {
         this.name = name;
     }
 
-    public UserEntity(UserEntityRegistrationDto memberRegistrationDto) {
-        name = memberRegistrationDto.name();
-        email = memberRegistrationDto.email();
-        password = memberRegistrationDto.password();
+    public UserEntity(UserEntityRegistrationDto userEntityRegistrationDto) {
+        name = userEntityRegistrationDto.name();
+        email = userEntityRegistrationDto.email();
+        password = userEntityRegistrationDto.password();
     }
 
-
-
-    public UserEntity(UserEntityDto userDto) {
-        id = userDto.id();
-        name = userDto.name();
-        email = userDto.email();
+    public UserEntity(UserEntityDto userEntityDto) {
+        id = userEntityDto.id();
+        name = userEntityDto.name();
+        email = userEntityDto.email();
     }
 
     @Override
