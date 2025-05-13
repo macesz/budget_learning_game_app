@@ -26,4 +26,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Optional<List<Transaction>> getAllByUserEntityAndDateAfter(UserEntity userEntity, LocalDate startDate);
 
     Optional<List<Transaction>> getAllByUserEntity(UserEntity userEntity);
+
+
+
+
 }
