@@ -36,7 +36,7 @@ public class Transaction {
     private UserEntity userEntity;
 
     @ManyToOne
-    @JoinColumn(name = "house_id")
+    @JoinColumn(name = "household_id")
     private Household household;
 
     // Add date for transaction

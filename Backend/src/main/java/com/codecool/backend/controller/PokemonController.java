@@ -19,36 +19,36 @@ public class PokemonController {
     public PokemonController(PokemonEvolutionService pokemonEvolutionService) {
         this.pokemonEvolutionService = pokemonEvolutionService;
     }
+//
+//    @GetMapping("/user/{userId}/currentPokemon")
+//    public UserPokemonDto getCurrentPokemon(@PathVariable Long userId) {
+//        return pokemonEvolutionService.getCurrentPokemonById(userId);
+//    }
 
-    @GetMapping("/user/{userId}/currentPokemon")
-    public UserPokemonDto getCurrentPokemon(@PathVariable Long userId) {
-        return pokemonEvolutionService.getCurrentPokemonById(userId);
-    }
-
-    @GetMapping("/user/{userId}/pokemons")
-    public List<UserPokemonDto> getPokemons(@PathVariable Long userId) {
-        return pokemonEvolutionService.getAllPokemonsByUserId(userId);
-    }
-
-    @GetMapping("/evolution/check/happiness")
-    public List<UserPokemonDto> checkHappinessEvolution() {
-        return pokemonEvolutionService.checkHappinessEvolutions();
-    }
-
-    @PostMapping("/{pokemonId}/evolution/evolve")
-    public UserPokemonDto evolvePokemon(@PathVariable Long pokemonId) {
-        return pokemonEvolutionService.evolvePokemon(pokemonId);
-    }
-
-    @PostMapping("/{pokemonId}/evolution/mark")
-    public boolean markForEvolution(@PathVariable Long pokemonId) {
-        return pokemonEvolutionService.markForEvolution(pokemonId);
-    }
-
-    @PostMapping("/{pokemonId}/happiness/increase/{amount}")
-    public UserPokemonDto increaseHappiness(@PathVariable Long pokemonId, @PathVariable Integer amount) {
-        return pokemonEvolutionService.increaseHappiness(pokemonId, amount);
-    }
+//    @GetMapping("/user/{userId}/pokemons")
+//    public List<UserPokemonDto> getPokemons(@PathVariable Long userId) {
+//        return pokemonEvolutionService.getAllPokemonsByUserId(userId);
+//    }
+//
+//    @GetMapping("/evolution/check/happiness")
+//    public List<UserPokemonDto> checkHappinessEvolution() {
+//        return pokemonEvolutionService.checkHappinessEvolutions();
+//    }
+//
+//    @PostMapping("/{pokemonId}/evolution/evolve")
+//    public UserPokemonDto evolvePokemon(@PathVariable Long pokemonId) {
+//        return pokemonEvolutionService.evolvePokemon(pokemonId);
+//    }
+//
+//    @PostMapping("/{pokemonId}/evolution/mark")
+//    public boolean markForEvolution(@PathVariable Long pokemonId) {
+//        return pokemonEvolutionService.markForEvolution(pokemonId);
+//    }
+//
+//    @PostMapping("/{pokemonId}/happiness/increase/{amount}")
+//    public UserPokemonDto increaseHappiness(@PathVariable Long pokemonId, @PathVariable Integer amount) {
+//        return pokemonEvolutionService.increaseHappiness(pokemonId, amount);
+//    }
 
     //TODO evolutionDTO + endP
 }
