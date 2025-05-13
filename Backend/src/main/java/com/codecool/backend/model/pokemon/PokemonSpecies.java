@@ -20,14 +20,7 @@ public class PokemonSpecies {
     @Id
     private Integer id;
 
-    public PokemonSpecies(PokemonSpeciesDto pokemonSpeciesDto) {
-        this.name = pokemonSpeciesDto.name();
-        this.id = pokemonSpeciesDto.id();
-        this.baseHappiness = pokemonSpeciesDto.baseHappiness();
-        this.pokeIndexNumber = pokemonSpeciesDto.id();
-    }
 
-    public PokemonSpecies() {}
 
     @Column(name = "poke_index_number")
     private Integer pokeIndexNumber;
@@ -55,9 +48,13 @@ public class PokemonSpecies {
     private Integer evolutionThreshold;
 
 
-    public void addPokemon(PokemonAsset pokemonAsset) {
-        pokemons.add(pokemonAsset);
-        pokemonAsset.setSpecies(this);
+    public PokemonSpecies(PokemonSpeciesDto pokemonSpeciesDto) {
+        this.name = pokemonSpeciesDto.name();
+        this.id = pokemonSpeciesDto.id();
+        this.baseHappiness = pokemonSpeciesDto.baseHappiness();
+        this.pokeIndexNumber = pokemonSpeciesDto.id();
     }
+
+    public PokemonSpecies() {}
 
 }

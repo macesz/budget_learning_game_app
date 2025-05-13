@@ -30,7 +30,7 @@ public class UserEntity {
     @Column(nullable = false)
     private BigDecimal targetAmount;
 
-    @ManyToMany(mappedBy = "categories")
+    @OneToMany(mappedBy = "userEntity")
     private Set<Transaction> transactions;
 
     @ManyToOne

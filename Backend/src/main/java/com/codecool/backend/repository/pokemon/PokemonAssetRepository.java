@@ -12,6 +12,5 @@ public interface PokemonAssetRepository extends JpaRepository<PokemonAsset, Inte
 
     Optional<PokemonAsset> findPokemonAssetById(Integer id);
 
-    //public Optional<Pokemon>
 
 }

@@ -44,30 +44,30 @@ public class PokemonService {
 
     //@PostConstruct
 //    @Transactional
-    @EventListener(ApplicationReadyEvent.class)
-    public void init() {
-        if (evolutionChainRepository.count() == 0) {
-            fetchEvolutionChains(100);
-        }
-    }
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void init() {
+//        if (evolutionChainRepository.count() == 0) {
+//            fetchEvolutionChains(100);
+//        }
+//    }
 
-    private void fetchEvolutionChains(Integer num) {
-        for (Integer id = 1; id <= num; id++) {
-            try {
-                String url = getFormattedUrl(String.valueOf(id), PokeApiBaseUrl.EVOLUTION);
-                EvolutionChainDto response = restTemplate.getForObject(url, EvolutionChainDto.class);
-
-                if (response != null && response.chain() != null) {
-                    log.info("About to access evolutionIds of chain ID: {}", response.chain());
-
-                 List<PokemonSpecies> speciesList = parseEvolutionChain(id, response.chain());
-                    fetchAndSaveSpecies(speciesList);
-                }
-            } catch (Exception e) {
-                System.err.println("Error fetching evolution chain " + id + ": " + e.getMessage());
-            }
-        }
-    }
+//    private void fetchEvolutionChains(Integer num) {
+//        for (Integer id = 1; id <= num; id++) {
+//            try {
+//                String url = getFormattedUrl(String.valueOf(id), PokeApiBaseUrl.EVOLUTION);
+//                EvolutionChainDto response = restTemplate.getForObject(url, EvolutionChainDto.class);
+//
+//                if (response != null && response.chain() != null) {
+//                    log.info("About to access evolutionIds of chain ID: {}", response.chain());
+//
+//                 List<PokemonSpecies> speciesList = parseEvolutionChain(id, response.chain());
+//                    fetchAndSaveSpecies(speciesList);
+//                }
+//            } catch (Exception e) {
+//                System.err.println("Error fetching evolution chain " + id + ": " + e.getMessage());
+//            }
+//        }
+//    }
 
     private List<PokemonSpecies> parseEvolutionChain(int chainId, EvolutionStageDto rootStage) {
         EvolutionChain evolutionChain = new EvolutionChain();
@@ -97,112 +97,112 @@ public class PokemonService {
         return speciesList;
     }
 
-    public void fetchAndSaveSpecies(List<PokemonSpecies> speciesList) {
-        for (PokemonSpecies species : speciesList) {
-            try {
-                String url = getFormattedUrl(String.valueOf(species.getId()), PokeApiBaseUrl.SPECIES); // e.g., https://pokeapi.co/api/v2/pokemon-species/{id}
-                PokemonSpeciesDto dto = restTemplate.getForObject(url, PokemonSpeciesDto.class);
-                if (dto != null && dto.id() != null) {
-                    saveOrUpdateSpecies(dto);
-                }
+//    public void fetchAndSaveSpecies(List<PokemonSpecies> speciesList) {
+//        for (PokemonSpecies species : speciesList) {
+//            try {
+//                String url = getFormattedUrl(String.valueOf(species.getId()), PokeApiBaseUrl.SPECIES); // e.g., https://pokeapi.co/api/v2/pokemon-species/{id}
+//                PokemonSpeciesDto dto = restTemplate.getForObject(url, PokemonSpeciesDto.class);
+//                if (dto != null && dto.id() != null) {
+//                    saveOrUpdateSpecies(dto);
+//                }
+//
+//            } catch (Exception e) {
+//                log.warn("Failed to fetch species with ID {}: {}", species.getId(), e.getMessage());
+//            }
+//        }
+//
+//    }
 
-            } catch (Exception e) {
-                log.warn("Failed to fetch species with ID {}: {}", species.getId(), e.getMessage());
-            }
-        }
+//    private void saveOrUpdateSpecies(PokemonSpeciesDto dto) {
+//        Integer speciesId = dto.id();
+//        if (speciesId == null) {
+//            throw new RuntimeException("Species with ID " + speciesId + "?????????");
+//        }
+//
+//        PokemonSpecies species = pokemonSpeciesRepository.findById(speciesId).orElseGet(PokemonSpecies::new);
+//        species.setId(speciesId);
+//        species.setName(dto.name());
+//        species.setBaseHappiness(dto.baseHappiness());
+//        species.setDescription(dto.description());
+//        species.setPokeIndexNumber(dto.id());
+//
+//        species.setEvolutionThreshold(200); //TODO
+//        species.setEvolutionTrigger("Happiness");
+//        if (species.getEvolutionChain() != null) {
+//            Integer evolutionChainId = species.getEvolutionChain().getId();
+//
+//            EvolutionChain evolutionChain = evolutionChainRepository
+//                    .findById(evolutionChainId)
+//                    .orElseThrow(() -> new PokemonNotFoundException("Evolution chain not found"));
+//
+//            species.setEvolutionChain(evolutionChain);
+//        }
+//        pokemonSpeciesRepository.save(species);
+//
+//        if (dto.varieties() != null && !dto.varieties().isEmpty()) {
+//            List<NamedPokeApiResourceDto> namedPokeApiResourceDtoList= dto.varieties()
+//                    .stream()
+//                    .map(PokemonSpeciesVarietyDto::pokemon)
+//                    .toList();
+//            saveOrUpdatePokemons(namedPokeApiResourceDtoList, species);
+//        }
+//    }
 
-    }
-
-    private void saveOrUpdateSpecies(PokemonSpeciesDto dto) {
-        Integer speciesId = dto.id();
-        if (speciesId == null) {
-            throw new RuntimeException("Species with ID " + speciesId + "?????????");
-        }
-
-        PokemonSpecies species = pokemonSpeciesRepository.findById(speciesId).orElseGet(PokemonSpecies::new);
-        species.setId(speciesId);
-        species.setName(dto.name());
-        species.setBaseHappiness(dto.baseHappiness());
-        species.setDescription(dto.description());
-        species.setPokeIndexNumber(dto.id());
-
-        species.setEvolutionThreshold(200); //TODO
-        species.setEvolutionTrigger("Happiness");
-        if (species.getEvolutionChain() != null) {
-            Integer evolutionChainId = species.getEvolutionChain().getId();
-
-            EvolutionChain evolutionChain = evolutionChainRepository
-                    .findById(evolutionChainId)
-                    .orElseThrow(() -> new PokemonNotFoundException("Evolution chain not found"));
-
-            species.setEvolutionChain(evolutionChain);
-        }
-        pokemonSpeciesRepository.save(species);
-
-        if (dto.varieties() != null && !dto.varieties().isEmpty()) {
-            List<NamedPokeApiResourceDto> namedPokeApiResourceDtoList= dto.varieties()
-                    .stream()
-                    .map(PokemonSpeciesVarietyDto::pokemon)
-                    .toList();
-            saveOrUpdatePokemons(namedPokeApiResourceDtoList, species);
-        }
-    }
-
-    private void saveOrUpdatePokemons(List<NamedPokeApiResourceDto> varieties, PokemonSpecies species) {
-        for (NamedPokeApiResourceDto variety : varieties) {
-            try {
-                String name = variety.name();
-                Integer pokemonId = getIdFromUrl(variety.url());
-
-                String url = getFormattedUrl(name, PokeApiBaseUrl.POKEMON);
-                PokemonAssetDto dto = restTemplate.getForObject(url, PokemonAssetDto.class);
-
-                if (dto != null) {
-                    Integer id = dto.id();
-                    if (id != null) {
-                        PokemonAsset pokemon = pokemonAssetRepository
-                            .findPokemonAssetById(id).orElseGet(PokemonAsset::new);
-                        //log.info("pokemon", pokemon);
-                        if (pokemon.getName() == null) {
-                            pokemon = (PokemonAsset) createPokemonAsset(id, species.getName(), species, species.getEvolutionChain(), dto.baseExperience());
-                        }
-                        species.addPokemon(pokemon);
-                        pokemonAssetRepository.save(pokemon);
-                    }
-                }
-            } catch (Exception e) {
-                log.warn("Failed to fetch/save Pokémon variety '{}': {}", variety.name(), e.getMessage());
-            }
-        }
-    }
-    private PokemonAsset createPokemonAsset(Integer pokeIndex, String name, PokemonSpecies species, EvolutionChain evolution, Integer baseExperience) {
-        if (species == null || evolution == null) {
-            System.out.println("Error creating pokemon asset");
-            return null;
-        };
-        String id = pokeIndex.toString();
-        String pictureUrl = getFormattedUrl(id, PokeApiBaseUrl.PIC_URL);
-        String gifUrl = getFormattedUrl(id, PokeApiBaseUrl.GIF_URL);
-        String spriteFront = getFormattedUrl(id, PokeApiBaseUrl.SPRITE_FRONT);
-        String spriteBack = getFormattedUrl(id, PokeApiBaseUrl.SPRITE_BACK);
-        String cryAudioUrl = getFormattedUrl(id, PokeApiBaseUrl.CRY);
-
-        PokemonAsset poke = new PokemonAsset();
-        poke.setId(pokeIndex);
-        poke.setName(name);
-
-        poke.setPictureUrl(pictureUrl);
-        poke.setGifUrl(gifUrl);
-        poke.setSpriteFront(spriteFront);
-        poke.setSpriteBack(spriteBack);
-        poke.setCryAudioUrl(cryAudioUrl);
-
-        poke.setBaseExperience(baseExperience);
-        poke.setSpecies(species);
-        poke.setEvolution(evolution);
-
-        return poke;
-    }
+//    private void saveOrUpdatePokemons(List<NamedPokeApiResourceDto> varieties, PokemonSpecies species) {
+//        for (NamedPokeApiResourceDto variety : varieties) {
+//            try {
+//                String name = variety.name();
+//                Integer pokemonId = getIdFromUrl(variety.url());
+//
+//                String url = getFormattedUrl(name, PokeApiBaseUrl.POKEMON);
+//                PokemonAssetDto dto = restTemplate.getForObject(url, PokemonAssetDto.class);
+//
+//                if (dto != null) {
+//                    Integer id = dto.id();
+//                    if (id != null) {
+//                        PokemonAsset pokemon = pokemonAssetRepository
+//                            .findPokemonAssetById(id).orElseGet(PokemonAsset::new);
+//                        //log.info("pokemon", pokemon);
+//                        if (pokemon.getName() == null) {
+//                            pokemon = (PokemonAsset) createPokemonAsset(id, species.getName(), species, species.getEvolutionChain(), dto.baseExperience());
+//                        }
+//                        species.addPokemon(pokemon);
+//                        pokemonAssetRepository.save(pokemon);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                log.warn("Failed to fetch/save Pokémon variety '{}': {}", variety.name(), e.getMessage());
+//            }
+//        }
+//    }
+//    private PokemonAsset createPokemonAsset(Integer pokeIndex, String name, PokemonSpecies species, EvolutionChain evolution, Integer baseExperience) {
+//        if (species == null || evolution == null) {
+//            System.out.println("Error creating pokemon asset");
+//            return null;
+//        };
+//        String id = pokeIndex.toString();
+//        String pictureUrl = getFormattedUrl(id, PokeApiBaseUrl.PIC_URL);
+//        String gifUrl = getFormattedUrl(id, PokeApiBaseUrl.GIF_URL);
+//        String spriteFront = getFormattedUrl(id, PokeApiBaseUrl.SPRITE_FRONT);
+//        String spriteBack = getFormattedUrl(id, PokeApiBaseUrl.SPRITE_BACK);
+//        String cryAudioUrl = getFormattedUrl(id, PokeApiBaseUrl.CRY);
+//
+//        PokemonAsset poke = new PokemonAsset();
+//        poke.setId(pokeIndex);
+//        poke.setName(name);
+//
+//        poke.setPictureUrl(pictureUrl);
+//        poke.setGifUrl(gifUrl);
+//        poke.setSpriteFront(spriteFront);
+//        poke.setSpriteBack(spriteBack);
+//        poke.setCryAudioUrl(cryAudioUrl);
+//
+//        poke.setBaseExperience(baseExperience);
+//        poke.setSpecies(species);
+//        poke.setEvolution(evolution);
+//
+//        return poke;
+//    }
 
 
 

@@ -20,7 +20,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     Optional<List<Transaction>> findByCategoriesIn(Collection<Category> categories);
 
-
     boolean deleteTransactionById(Long id);
 
     Optional<List<Transaction>> getAllByUserEntityAndDateAfter(UserEntity userEntity, LocalDate startDate);
