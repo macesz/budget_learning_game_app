@@ -19,7 +19,9 @@ public class Category {
     @Column(nullable = false, unique = true)
     private CategoryType type;
 
-    // add member id as all members can have own lables of categories
+    @ManyToOne
+    @JoinColumn(name = "household_id")
+    private Household household;
 
     private String description;
 

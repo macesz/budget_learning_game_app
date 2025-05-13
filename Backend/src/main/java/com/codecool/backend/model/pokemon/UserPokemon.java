@@ -25,8 +25,6 @@ public class UserPokemon {
     @Column(name = "picture_url", nullable = false)
     private String pictureUrl;
 
-    @Column(name = "gif_url",nullable = false)
-    private String gifUrl;
 
     @Column(name = "hatch_date", nullable = false)
     private LocalDateTime hatchDate = LocalDateTime.now();
@@ -41,7 +39,4 @@ public class UserPokemon {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     private UserEntity user;
-
-    @Column(name = "experience", nullable = false)
-    private Integer experience;
 }

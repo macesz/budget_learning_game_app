@@ -16,13 +16,13 @@ public class Household {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "house")
+    @OneToMany(mappedBy = "household")
     private Set<UserEntity> users;
 
-    @OneToMany(mappedBy = "house")
+    @OneToMany(mappedBy = "household")
     private Set<Category> categories;
 
-    @OneToMany(mappedBy = "house")
+    @OneToMany(mappedBy = "household")
     private Set<Transaction> transactions;
 
     public Household() {};
