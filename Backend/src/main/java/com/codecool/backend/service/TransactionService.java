@@ -23,14 +23,12 @@ import java.util.stream.Collectors;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserEntityRepository userRepository;
-    private final UserEntityService userEntityService;
     private final CategoryRepository categoryRepository;
 
     @Autowired
     public TransactionService(TransactionRepository transactionRepository, UserEntityRepository userRepository, UserEntityService userEntityService, CategoryRepository categoryRepository) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
-        this.userEntityService = userEntityService;
         this.categoryRepository = categoryRepository;
     }
 
