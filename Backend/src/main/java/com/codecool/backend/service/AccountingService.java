@@ -1,6 +1,7 @@
 package com.codecool.backend.service;
 
 import com.codecool.backend.model.entity.Closer;
+import com.codecool.backend.model.entity.Household;
 import com.codecool.backend.model.entity.Transaction;
 import com.codecool.backend.repository.CloserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
