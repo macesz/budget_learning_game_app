@@ -2,6 +2,7 @@ package com.codecool.backend.service;
 
 import com.codecool.backend.model.entity.Closer;
 import com.codecool.backend.model.entity.Transaction;
+import com.codecool.backend.repository.CloserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,18 +14,18 @@ import java.util.List;
 public class AccountingService {
 
     private final TransactionService transactionService;
-    private final ICloserService closerSrevice;
+    private final CloserRepository closerRepository;
 
 
     @Autowired
-    public AccountingService(TransactionService transactionService, ICloserService closerSrevice) {
+    public AccountingService(TransactionService transactionService, CloserRepository closerRepository) {
         this.transactionService = transactionService;
-        this.closerSrevice = closerSrevice;
+        this.closerRepository = closerRepository;
     }
 
 
     public BigDecimal getBalance(Long householdId, LocalDate balanceDate) {
-        Closer lastCloser = closerSrevice.getLastCloser(householdId, balanceDate);
+        Closer lastCloser = closerRepository.getCloserByDateAndId(householdId, balanceDate);
         LocalDate lastCloserDate = lastCloser.getDate();
 
         List<Transaction> transactions = transactionService.getTransactions(householdId, lastCloserDate, balanceDate );
