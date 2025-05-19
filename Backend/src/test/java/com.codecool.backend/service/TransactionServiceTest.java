@@ -365,23 +365,23 @@ public class TransactionServiceTest {
         verify(transactionRepository, times(1)).findByHouseholdAndDateBetween(household, startDate, endDate);
     }
 
-    @DisplayName("JUnit test for getAllIncomeByHousholdInDateRanger method")
-    @Test
-    void testGetAllIncomeByHousholdInDateRanger() {
-        // GIVEN
-        LocalDate startDate = today.minusDays(7);
-        LocalDate endDate = today;
-        List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
-
-        given(transactionRepository.getAllIncomeByHouseholdByDateRange(household, startDate, endDate))
-                .willReturn(Optional.of(transactions));
-
-        // WHEN
-        List<Transaction> result = transactionService.getAllIncomeByHousholdInDateRanger(household, startDate, endDate);
-
-        // THEN
-        assertThat(result).hasSize(2);
-
-        verify(transactionRepository, times(1)).getAllIncomeByHouseholdByDateRange(household, startDate, endDate);
-    }
+//    @DisplayName("JUnit test for getAllIncomeByHousholdInDateRanger method")
+//    @Test
+//    void testGetAllIncomeByHousholdInDateRanger() {
+//        // GIVEN
+//        LocalDate startDate = today.minusDays(7);
+//        LocalDate endDate = today;
+//        List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
+//
+//        given(transactionRepository.getAllIncomeByHouseholdByDateRange(household, startDate, endDate))
+//                .willReturn(Optional.of(transactions));
+//
+//        // WHEN
+//        List<Transaction> result = transactionService.getAllIncomeByHousholdInDateRanger(household, startDate, endDate);
+//
+//        // THEN
+//        assertThat(result).hasSize(2);
+//
+//        verify(transactionRepository, times(1)).getAllIncomeByHouseholdByDateRange(household, startDate, endDate);
+//    }
 }

@@ -59,5 +59,18 @@ public class AccountingService {
         return closerRepository.save(closer) ;
     }
 
+    public Closer getLatestCloser(Long householdId) {
+        return closerRepository.findFirstByHouseholdIdOrderByDateDesc(householdId);
+    }
+
+    public List<Closer> getClosersByHousehold(Long householdId) {
+        return closerRepository.findByHouseholdIdOrderByDateDesc(householdId);
+    }
+
+    public Closer getCloserByDate(Long householdId, LocalDate date) {
+        return closerRepository.findByHouseholdIdAndDate(householdId, date)
+                .orElse(null);
+    }
+
 
 }

@@ -30,7 +30,7 @@ public class TransactionService {
     private final HouseholdRepository householdRepository;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository, UserEntityRepository userRepository, UserEntityService userEntityService, CategoryRepository categoryRepository, HouseholdRepository householdRepository) {
+    public TransactionService(TransactionRepository transactionRepository, UserEntityRepository userRepository, CategoryRepository categoryRepository, HouseholdRepository householdRepository) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
@@ -54,7 +54,8 @@ public class TransactionService {
 
         UserEntity userEntity = userRepository.findUserByEmail(email)
                 .orElseThrow(UserEntityNotFoundException::new);
-        List<Transaction> transactions = new ArrayList<>();
+        List<Transaction> transactions;
+
         if(startDate == null){
             transactions = transactionRepository.getAllByUserEntity(userEntity)
                     .orElseThrow(TransactionNotFoundException::new);
