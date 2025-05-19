@@ -6,6 +6,7 @@ import com.codecool.backend.repository.TransactionRepository;
 import com.codecool.backend.repository.UserEntityRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -24,5 +25,9 @@ public class HouseHoldService {
 
     public boolean deleteHouseholdById(Long id){
         return householdRepository.deleteHouseholdById(id);
+    }
+
+    public Household createHousehold(Long householdId) {
+        return householdRepository.save(new Household(householdId));
     }
 }
