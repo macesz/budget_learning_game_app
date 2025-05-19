@@ -20,7 +20,7 @@ public class HouseHoldService {
     }
 
     public Optional<Household> findHouseholdById(Long id){
-        return householdRepository.findById(id);
+        return householdRepository.findHouseholdById(id);
     }
 
     public boolean deleteHouseholdById(Long id){
