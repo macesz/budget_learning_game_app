@@ -1,50 +1,44 @@
 package com.codecool.backend.service;
 
+import com.codecool.backend.model.entity.Closer;
+import com.codecool.backend.model.entity.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class AccountingService {
 
     private final TransactionService transactionService;
+    private final ICloserService closerSrevice;
 
 
     @Autowired
-    public AccountingService(TransactionService transactionService) {
+    public AccountingService(TransactionService transactionService, ICloserService closerSrevice) {
         this.transactionService = transactionService;
+        this.closerSrevice = closerSrevice;
     }
 
-    public BigDecimal getTotalIncome(Long householdId, LocalDate startDate, LocalDate endDate) {
-
-        //TODO
-
-        return new BigDecimal(0);
-
-    }
-
-    public BigDecimal getTotalExpense(Long householdId, LocalDate startDate, LocalDate endDate) {
-
-        return new BigDecimal(0);
-        //TODO
-    }
 
     public BigDecimal getBalance(Long householdId, LocalDate balanceDate) {
-        return new BigDecimal(0);
+        Closer lastCloser = closerSrevice.getLastCloser(householdId, balanceDate);
+        LocalDate lastCloserDate = lastCloser.getDate();
 
-        // find the last clouser before the ibalanceDate
-        //get the sum of total income between the closer date and the balanceDate
-        //get the sum of total expense between the closer date and the balanceDate
-        //sum income and expense, and clouser
+        List<Transaction> transactions = transactionService.getTransactions(householdId, lastCloserDate, balanceDate );
+
+        BigDecimal sum = transactions.stream().map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return lastCloser.getAmount().add(sum);
     }
 
-    public BigDecimal createCloser(Long householdId, LocalDate closerDate) {
-        // find the last clouser before the closerDate
-        // save to closer repository
+    public Closer createCloser(Long householdId, LocalDate closerDate) {
+        BigDecimal balance = getBalance(householdId, closerDate);
 
-        return new BigDecimal(0);
+        // save to repository
+        return new Closer(balance, closerDate);
     }
 
 

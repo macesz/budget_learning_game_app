@@ -3,6 +3,7 @@ package com.codecool.backend.controller.dto;
 import com.codecool.backend.model.entity.Category;
 import com.codecool.backend.model.entity.Transaction;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,7 +12,7 @@ public record TransactionDto(
         Long id,
         String name,
         Set<CategoryDto> categories, // Changed from a single category to a set
-        int amount,
+        BigDecimal amount,
         int userId,  // Changed from memberId to userId
         Long houseId,
         LocalDate date) {

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class Transaction {
 
     private Set<Category> categories;
 
-    private int amount;
+    private BigDecimal amount;
 
     @ManyToOne ///  many to many
     @JoinColumn(referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_member_transaction"), nullable = false)
@@ -45,7 +46,7 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(Long id, String name, Set<Category> categories, int amount, UserEntity userEntity) {
+    public Transaction(Long id, String name, Set<Category> categories, BigDecimal amount, UserEntity userEntity) {
         this.id = id;
         this.name = name;
         this.categories = categories;
@@ -62,6 +63,7 @@ public class Transaction {
         name = dto.name();
         amount = dto.amount();
     }
+
 
     @Override
     public String toString() {

@@ -7,6 +7,7 @@ import com.codecool.backend.controller.exception.CategoryNotFoundException;
 import com.codecool.backend.controller.exception.UserEntityNotFoundException;
 import com.codecool.backend.controller.exception.TransactionNotFoundException;
 import com.codecool.backend.model.entity.Category;
+import com.codecool.backend.model.entity.Household;
 import com.codecool.backend.model.entity.UserEntity;
 import com.codecool.backend.model.entity.Transaction;
 import com.codecool.backend.repository.CategoryRepository;
@@ -15,6 +16,7 @@ import com.codecool.backend.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -77,7 +79,7 @@ public class TransactionService {
         Transaction transaction = new Transaction(transactionDto);
         transaction.setUserEntity(userEntity); // Changed from setMember to setUserEntity
         transaction.setCategories(categories);
-        transaction.setDate(LocalDate.now());
+        transaction.setDate(date);
         transaction.setHousehold(userEntity.getHousehold()); // Set house from user
 
         return transactionRepository.save(transaction).getId();
@@ -136,21 +138,33 @@ public class TransactionService {
         return transactionRepository.deleteTransactionById(id);
     }
 
-    public int getSumOfTransactionByCategoryId(Long categoryId) {
+    public BigDecimal getSumOfTransactionByCategoryId(Long categoryId) {
         List<Transaction> transactions = transactionRepository.findByCategories_Id(categoryId)
                 .orElseThrow(TransactionNotFoundException::new);
         return transactions.stream()
-                .mapToInt(Transaction::getAmount)
-                .sum();
+                .map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+
     }
 
-    public OptionalDouble getAvgSpendingByCategoryId(Long categoryId) {
+    public BigDecimal getAvgSpendingByCategoryId(Long categoryId) {
         List<Transaction> transactions = transactionRepository.findByCategories_Id(categoryId)
                 .orElseThrow(TransactionNotFoundException::new);
         return transactions.stream()
-                .mapToInt(Transaction::getAmount)
-                .average();
+                .map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+
+    public List<Transaction> getAllIncomeByHousholdInDateRanger(Household household, LocalDate startDate, LocalDate endDate) {
+        List<Transaction> transactions = transactionRepository.getAllIncomeByHouseholdByDateRange(household, startDate, endDate)
+                .orElseThrow(TransactionNotFoundException::new);
+
+        return transactions.stream()
+                .toList();
+    }
+
+   public List<Transaction> getTransactions(Long householdId, LocalDate lastCloserDate, LocalDate balanceDate){
+        return new ArrayList<>();
+   }
 
 }
