@@ -53,45 +53,7 @@ Family Finance Manager is a comprehensive solution for families to track their f
 - Tailwind CSS
 - Daisy UI (component library)
 
-## Project Structure
 
-```
-├── backend/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/codecool/backend/
-│   │   │   │   ├── controller/         # REST endpoints
-│   │   │   │   ├── model/              # Entity classes
-│   │   │   │   ├── repository/         # Database repositories
-│   │   │   │   ├── service/            # Business logic
-│   │   │   │   ├── config/             # Configuration classes
-│   │   │   │   ├── security/           # Security-related classes
-│   │   │   │   ├── gamification/       # Pet evolution and gamification logic
-│   │   │   │   └── BackendApplication.java  # Main class
-│   │   │   └── resources/              # Application properties
-│   │   └── test/                       # Test classes
-│   └── pom.xml                         # Backend dependencies and build configuration
-│
-├── frontend/
-│   ├── public/                         # Public assets and index.html
-│   ├── src/
-│   │   ├── components/                 # React components
-│   │   │   ├── auth/                   # Authentication components
-│   │   │   ├── dashboard/              # Dashboard views
-│   │   │   ├── household/              # Household management
-│   │   │   ├── transactions/           # Transaction forms and lists
-│   │   │   └── pet/                    # Virtual pet components
-│   │   ├── services/                   # API service integration
-│   │   ├── contexts/                   # React contexts
-│   │   ├── hooks/                      # Custom React hooks
-│   │   ├── utils/                      # Utility functions
-│   │   ├── styles/                     # CSS and Tailwind customizations
-│   │   ├── App.js                      # Main App component
-│   │   └── index.js                    # Entry point
-│   ├── package.json                    # Frontend dependencies
-│   └── tailwind.config.js              # Tailwind configuration
-│
-└── README.md                           # This file
 ```
 
 ## Setup & Installation
@@ -247,14 +209,3 @@ npm test
 - Social features for sharing achievements
 - Progressive web app (PWA) support
 
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
