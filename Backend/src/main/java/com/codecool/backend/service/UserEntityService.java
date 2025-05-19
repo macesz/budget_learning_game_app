@@ -61,13 +61,17 @@ public class UserEntityService {
         return userEntityRepository.findUserByEmail(email).orElse(null);
     }
 
-    public int getMySaving(String email) {
+    public BigDecimal getMySaving(String email) {
         UserEntity member = userEntityRepository.findUserByEmail(email)
                 .orElseThrow(UserEntityNotFoundException::new);
         List<Transaction> transactions = transactionRepository.getAllByUserEntity(member).orElse(null);
         assert transactions != null;
-        return member.getTargetAmount().intValue()-(transactions
+
+        BigDecimal totalTransactions = transactions
                 .stream()
-                .mapToInt(Transaction::getAmount).sum());
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return member.getTargetAmount().subtract(totalTransactions);
     }
 }

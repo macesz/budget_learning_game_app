@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -121,7 +122,7 @@ public class UserEntityController {
 //    }
 
     @GetMapping("/savings")
-    public int getMySavings(){
+    public BigDecimal getMySavings(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userEntityService.getMySaving(user.getUsername());
     }
