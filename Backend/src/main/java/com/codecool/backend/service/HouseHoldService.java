@@ -30,4 +30,7 @@ public class HouseHoldService {
     public Household createHousehold(Long householdId) {
         return householdRepository.save(new Household(householdId));
     }
+    public Household createHousehold() {
+        return householdRepository.save(new Household());
+    }
 }

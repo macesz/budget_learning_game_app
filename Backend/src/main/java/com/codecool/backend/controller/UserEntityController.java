@@ -1,20 +1,30 @@
 package com.codecool.backend.controller;
 
 import com.codecool.backend.controller.dto.*;
+import com.codecool.backend.controller.exception.UnauthorizedException;
+import com.codecool.backend.controller.exception.UserEntityNotFoundException;
+import com.codecool.backend.model.entity.UserEntity;
 import com.codecool.backend.security.jwt.JwtUtils;
 import com.codecool.backend.service.UserEntityService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.List;
 
 
@@ -36,94 +46,97 @@ public class UserEntityController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserEntitySignInDto loginRequest) {
+    public ResponseEntity<?> login(@RequestBody @Validated UserEntitySignInDto loginRequest) {
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
 
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+            User userDetails = (User) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                    .toList();
+            com.codecool.backend.model.entity.UserEntity loggedUser = userEntityService.findUserByEmail(userDetails.getUsername());
 
-        User userDetails = (User) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                .toList();
-        com.codecool.backend.model.entity.UserEntity loggedMember = userEntityService.findMemberByEmail(userDetails.getUsername());
-        return ResponseEntity
-                .ok(new JwtResponse(jwt, loggedMember.getName(), roles));
+            return ResponseEntity
+                    .ok(new JwtResponse(jwt, loggedUser.getName(), roles));
+        } catch (AuthenticationException e) {
+            // Using a structured error response is more informative than just the exception
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(new UserEntityNotFoundException());
+        }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> createUser(@RequestBody UserEntityRegistrationDto signUpRequest) {
+    public ResponseEntity<UserEntityDto> createUser(@RequestBody UserEntityRegistrationDto signUpRequest) {
+        UserEntityDto createdUser = userEntityService.register(signUpRequest, encoder);
 
-            return userEntityService.register(signUpRequest, encoder);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(createdUser.id()).toUri();
+
+        return ResponseEntity.created(location).body(createdUser);
     }
 
     @GetMapping("/profile")
-//    @PreAuthorize("isAuthenticated()")
-    public UserEntityProfileDto getProfile() {
+    public ResponseEntity<UserEntityProfileDto> getProfile() {
         // Get current authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
 
-        // Get the member associated with the email
-        com.codecool.backend.model.entity.UserEntity currentMember = userEntityService.findMemberByEmail(currentUserEmail);
+        // Get the user associated with the email
+        UserEntity currentUser = userEntityService.findUserByEmail(currentUserEmail);
 
-        return new UserEntityProfileDto(currentMember.getId(), currentMember.getName(), currentMember.getEmail(), currentMember.getTargetAmount());
+        UserEntityProfileDto profileDto = new UserEntityProfileDto(
+                currentUser.getId(),
+                currentUser.getName(),
+                currentUser.getEmail(),
+                currentUser.getTargetAmount()
+        );
+
+        return ResponseEntity.ok(profileDto);
     }
 
     @GetMapping("/{id}")
-    public UserEntityDto getUser(@PathVariable int id) {
-        return userEntityService.getMember(id);
+    public ResponseEntity<UserEntityDto> getUser(@PathVariable Long id) {
+        UserEntityDto user = userEntityService.getUserEntity(id);
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteUser(@PathVariable int id) {
-        return userEntityService.deleteMember(id);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        boolean deleted = userEntityService.deleteUserEntity(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
     }
-
 
     @PutMapping("/profile/update")
-    public ResponseEntity<?> updateUser(@RequestBody UpdateProfileDto profileDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
+    public ResponseEntity<UserEntityDto> updateUser(@RequestBody UpdateProfileDto profileDto) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserEmail = authentication.getName();
 
-        com.codecool.backend.model.entity.UserEntity currentMember = userEntityService.findMemberByEmail(currentUserEmail);
+            UserEntityDto updatedUser = userEntityService.updateProfile(
+                    currentUserEmail,
+                    profileDto,
+                    encoder
+            );
 
-        if(profileDto.currentPassword() != null && !profileDto.currentPassword().isEmpty()
-                && profileDto.newPassword() != null && !profileDto.newPassword().isEmpty()) {
-
-            if (!encoder.matches(profileDto.currentPassword(), currentMember.getPassword())) {
-                return ResponseEntity.badRequest().body("Wrong current password");
-            }
-
-            currentMember.setPassword(encoder.encode(profileDto.newPassword()));
-        }
-
-        if (profileDto.username() != null) {
-            currentMember.setName(profileDto.username());
-        }
-
-        if (profileDto.newTargetAmount() != null) {
-            currentMember.setTargetAmount(profileDto.newTargetAmount());
-        }
-
-        boolean updated = userEntityService.updateMember(currentMember);
-        if (updated) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().body("Failed to update user");
+            return ResponseEntity.ok(updatedUser);
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
-//    @GetMapping("/currentPokemon")
-//    public MyPokemonDto getMyPokemon(){
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        return memberService.getMyPokemon(user.getUsername());
-//    }
-
     @GetMapping("/savings")
-    public BigDecimal getMySavings(){
+    public ResponseEntity<BigDecimal> getMySavings() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userEntityService.getMySaving(user.getUsername());
+        BigDecimal savings = userEntityService.getMySaving(user.getUsername());
+        return ResponseEntity.ok(savings);
     }
 }
