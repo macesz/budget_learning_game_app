@@ -1,6 +1,7 @@
 package com.codecool.backend.repository;
 
 import com.codecool.backend.model.entity.Category;
+import com.codecool.backend.model.entity.Household;
 import com.codecool.backend.model.entity.UserEntity;
 import com.codecool.backend.model.entity.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +11,6 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
@@ -25,4 +25,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Optional<List<Transaction>> getAllByUserEntityAndDateAfter(UserEntity userEntity, LocalDate startDate);
 
     Optional<List<Transaction>> getAllByUserEntity(UserEntity userEntity);
+
+    Optional<List<Transaction>> getAllIncomeByHouseholdByDateRange(Household household, LocalDate startDate, LocalDate endDate);
+
+
+
+
 }

@@ -1,6 +1,4 @@
 package com.codecool.backend.model.entity;
-import com.codecool.backend.controller.dto.NewTransactionDto;
-import com.codecool.backend.controller.dto.TransactionDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -11,7 +9,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-public class Clouser {
+public class Closer {
     @Getter
     @Setter
     @Id
@@ -26,13 +24,17 @@ public class Clouser {
 
     private BigDecimal amount;
 
-    public Clouser() {}
+    public Closer() {}
 
-    public Clouser(Household household, LocalDate date, BigDecimal amount) {
+    public Closer(Household household, LocalDate date, BigDecimal amount) {
         this.household = household;
         this.date = date;
         this.amount = amount;
     }
 
 
+    public Closer(BigDecimal balance, LocalDate closerDate) {
+        this.amount = balance;
+        this.date = closerDate;
+    }
 }
