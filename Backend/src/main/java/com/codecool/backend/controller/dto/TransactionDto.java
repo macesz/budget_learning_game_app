@@ -13,7 +13,7 @@ public record TransactionDto(
         String name,
         Set<CategoryDto> categories, // Changed from a single category to a set
         BigDecimal amount,
-        int userId,  // Changed from memberId to userId
+        Long userId,  // Changed from memberId to userId
         Long houseId,
         LocalDate date) {
 

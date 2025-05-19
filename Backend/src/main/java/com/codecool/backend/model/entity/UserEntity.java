@@ -16,7 +16,7 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq")
-    private int id;
+    private Long id;
     private String name;
     @Column(unique = true)
     private String email;
@@ -70,7 +70,7 @@ public class UserEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity member = (UserEntity) o;
-        return id == member.id
+        return id.equals(member.id)
                 && Objects.equals(name, member.name)
                 && Objects.equals(email, member.email);
     }

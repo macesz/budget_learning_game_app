@@ -28,7 +28,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     Optional<List<Transaction>> getAllIncomeByHouseholdByDateRange(Household household, LocalDate startDate, LocalDate endDate);
 
-
+    Optional<List<Transaction>> findByHouseholdAndDateBetween(
+            Household household, LocalDate startDate, LocalDate endDate);
 
 
 }

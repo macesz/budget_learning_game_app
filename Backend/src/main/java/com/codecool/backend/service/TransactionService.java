@@ -11,6 +11,7 @@ import com.codecool.backend.model.entity.Household;
 import com.codecool.backend.model.entity.UserEntity;
 import com.codecool.backend.model.entity.Transaction;
 import com.codecool.backend.repository.CategoryRepository;
+import com.codecool.backend.repository.HouseholdRepository;
 import com.codecool.backend.repository.UserEntityRepository;
 import com.codecool.backend.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +27,14 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserEntityRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final HouseholdRepository householdRepository;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository, UserEntityRepository userRepository, UserEntityService userEntityService, CategoryRepository categoryRepository) {
+    public TransactionService(TransactionRepository transactionRepository, UserEntityRepository userRepository, UserEntityService userEntityService, CategoryRepository categoryRepository, HouseholdRepository householdRepository) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.householdRepository = householdRepository;
     }
 
     public List<CategoryDto> getAllCategories() {
@@ -155,16 +158,14 @@ public class TransactionService {
     }
 
 
-    public List<Transaction> getAllIncomeByHousholdInDateRanger(Household household, LocalDate startDate, LocalDate endDate) {
-        List<Transaction> transactions = transactionRepository.getAllIncomeByHouseholdByDateRange(household, startDate, endDate)
-                .orElseThrow(TransactionNotFoundException::new);
+    public List<Transaction> getTransactionsBetweenDates(Long householdId, LocalDate startDate, LocalDate endDate) {
+        // Find the household
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new IllegalArgumentException("Household not found"));
 
-        return transactions.stream()
-                .toList();
+        // Get all transactions for the household between the dates
+        return transactionRepository.findByHouseholdAndDateBetween(household, startDate, endDate)
+                .orElse(List.of());
     }
-
-   public List<Transaction> getTransactions(Long householdId, LocalDate lastCloserDate, LocalDate balanceDate){
-        return new ArrayList<>();
-   }
 
 }

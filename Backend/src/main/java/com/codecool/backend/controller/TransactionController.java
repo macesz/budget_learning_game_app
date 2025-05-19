@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.OptionalDouble;
@@ -30,10 +31,6 @@ public class TransactionController {
         return transactionService.getAllCategories();
     }
 
-//    @GetMapping("/all")
-//    public List<TransactionDto> getAll() throws Exception {
-//        return transactionService.getAllTransactions();
-//    }
 
     @GetMapping("/all")
     public List<TransactionDto> getAllByUser(@RequestParam(required = false) LocalDate date) {
@@ -57,12 +54,12 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}/avrg")
-    public OptionalDouble getAverageTransactions(@PathVariable Long id) {
+    public BigDecimal getAverageTransactions(@PathVariable Long id) {
         return transactionService.getAvgSpendingByCategoryId(id);
     }
 
     @GetMapping("/{id}/sum")
-    public int getSumOfTransactionByCategoryId(@PathVariable Long id) {
+    public BigDecimal getSumOfTransactionByCategoryId(@PathVariable Long id) {
       return transactionService.getSumOfTransactionByCategoryId(id);
     }
 

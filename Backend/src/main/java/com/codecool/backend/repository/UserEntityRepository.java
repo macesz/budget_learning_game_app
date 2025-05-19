@@ -1,20 +1,31 @@
 package com.codecool.backend.repository;
 
+import com.codecool.backend.model.entity.Household;
 import com.codecool.backend.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
-    boolean deleteUserEntityById(int id);
+    boolean deleteUserEntityById(Long id);
 
-    Optional<UserEntity> getUserById(int id);
+    Optional<UserEntity> getUserById(Long id);
 
     Optional<UserEntity> getUserByEmailAndPassword(String email, String password);
 
     Optional<UserEntity> findUserByName(String username);
 
     Optional<UserEntity> findUserByEmail(String email);
+
+    List<UserEntity> findAllByHousehold(Household household);
+
+    List<UserEntity> findAllByHouseholdId(Long householdId);
+
+    boolean existsByHouseholdId(Long householdId);
+
+    Long countByHouseholdId(Long householdId);
+
 }

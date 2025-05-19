@@ -93,5 +93,12 @@ public class Category {
             this.description = description;
             this.color = color;
         }
+
+        public String getDescription() {
+            return description;
+        }
+        public String getColor() {
+            return color;
+        }
     }
 }
