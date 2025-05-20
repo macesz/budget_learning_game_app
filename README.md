@@ -1,5 +1,5 @@
 
-# Family Finance Manager
+# Petconomy Gamified Budgeting and Finance Manager App
 
 A full-stack application for managing household finances with multiple users, featuring a gamified learning experience.
 
