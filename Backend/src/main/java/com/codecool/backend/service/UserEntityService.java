@@ -12,8 +12,6 @@ import com.codecool.backend.model.entity.Transaction;
 import com.codecool.backend.repository.UserEntityRepository;
 import com.codecool.backend.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,10 +35,12 @@ public class UserEntityService {
 
 
     public UserEntityDto register(UserEntityRegistrationDto signUpRequest, PasswordEncoder encoder) {
-        Household household = householdService.createHousehold();
+        Household household = householdService.createHousehold(signUpRequest.userName());
 
         UserEntity userEntity = new UserEntity();
-        userEntity.setName(signUpRequest.name());
+        userEntity.setUserName(signUpRequest.userName());
+        userEntity.setFirstName(signUpRequest.firstName());
+        userEntity.setLastName(signUpRequest.lastName());
         userEntity.setPassword(encoder.encode(signUpRequest.password()));
         userEntity.setEmail(signUpRequest.email());
         userEntity.setRoles(Set.of(Role.ROLE_USER));
@@ -57,12 +57,32 @@ public class UserEntityService {
         UserEntity currentUser = userEntityRepository.findUserByEmail(currentUserEmail)
                 .orElseThrow(UserEntityNotFoundException::new);
 
+
         if (!encoder.matches(updateProfileDto.currentPassword(), currentUser.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
 
         if (updateProfileDto.username() != null && !updateProfileDto.username().isEmpty()) {
-            currentUser.setName(updateProfileDto.username());
+            currentUser.setUserName(updateProfileDto.username());
+        }
+
+        if (updateProfileDto.firstName() != null && !updateProfileDto.firstName().isEmpty()) {
+            currentUser.setFirstName(updateProfileDto.firstName());
+        }
+
+        if (updateProfileDto.lastName() != null && !updateProfileDto.lastName().isEmpty()) {
+            currentUser.setLastName(updateProfileDto.lastName());
+        }
+
+        Household currentHousehold = currentUser.getHousehold();
+
+        if (updateProfileDto.houseName() != null && !updateProfileDto.houseName().isEmpty() && currentHousehold != null) {
+            currentHousehold.setHouseName(updateProfileDto.houseName());
+            householdService.updateHouseholdName(currentHousehold.getId(), updateProfileDto.houseName());
+        }
+
+        if (updateProfileDto.connectToUserEmail() != null && !updateProfileDto.connectToUserEmail().isEmpty()) {
+            changeUserHousehold(currentUser, updateProfileDto.connectToUserEmail());
         }
 
         if (updateProfileDto.email() != null && !updateProfileDto.email().isEmpty()) {
@@ -77,16 +97,45 @@ public class UserEntityService {
             currentUser.setTargetAmount(updateProfileDto.newTargetAmount());
         }
 
-        if (updateProfileDto.connectToUserEmail() != null && !updateProfileDto.connectToUserEmail().isEmpty()) {
-            UserEntity targetUser = userEntityRepository.findUserByEmail(updateProfileDto.connectToUserEmail())
-                    .orElseThrow(UserEntityNotFoundException::new);
-
-            Household targetHousehold = targetUser.getHousehold();
-            currentUser.setHousehold(targetHousehold);
-        }
-
         UserEntity updatedUser = userEntityRepository.save(currentUser);
         return new UserEntityDto(updatedUser);
+    }
+
+    private void changeUserHousehold(UserEntity user, String targetUserEmail) {
+        UserEntity targetUser = userEntityRepository.findUserByEmail(targetUserEmail)
+                .orElseThrow(UserEntityNotFoundException::new);
+
+        Household targetHousehold = targetUser.getHousehold();
+        if (targetHousehold == null) {
+            throw new IllegalStateException("Target user does not belong to any household");
+        }
+
+        Household originalHousehold = user.getHousehold();
+
+        user.setHousehold(targetHousehold);
+
+        if (originalHousehold != null && originalHousehold.getId().equals(targetHousehold.getId())) {
+            return;
+        }
+
+        if (originalHousehold != null) {
+            long membersCount = userEntityRepository.countByHouseholdId(originalHousehold.getId());
+            if (membersCount == 1) {
+                // The last member is leaving
+
+                //  Delete the household (cascading delete)
+                householdService.deleteHouseholdById(originalHousehold.getId());
+
+                // Archive the household
+                // originalHousehold.setStatus(HouseholdStatus.ARCHIVED);
+                // householdRepository.save(originalHousehold);
+
+                // Rename the household to indicate it's abandoned
+                // householdService.updateHouseholdName(originalHousehold.getId(),
+                //    originalHousehold.getHouseName() + " (Abandoned)");
+            }
+        }
+
     }
 
     public UserEntityDto getUserEntity(Long id) {

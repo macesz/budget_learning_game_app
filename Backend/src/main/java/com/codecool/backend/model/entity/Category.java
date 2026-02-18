@@ -62,7 +62,7 @@ public class Category {
                 '}';
     }
 
-    // Keep the category types as an enum
+    @Getter
     public enum CategoryType {
             INCOME("Income", "#1E90FF"),
             GROCERY("Grocery", "#32CD32"),
@@ -94,11 +94,5 @@ public class Category {
             this.color = color;
         }
 
-        public String getDescription() {
-            return description;
-        }
-        public String getColor() {
-            return color;
-        }
     }
 }

@@ -5,7 +5,6 @@ import com.codecool.backend.controller.dto.UpdateProfileDto;
 import com.codecool.backend.controller.dto.UserEntityDto;
 import com.codecool.backend.controller.dto.UserEntityRegistrationDto;
 import com.codecool.backend.controller.exception.HouseholdNotFoundException;
-import com.codecool.backend.controller.exception.UnauthorizedException;
 import com.codecool.backend.controller.exception.UserEntityNotFoundException;
 import com.codecool.backend.model.entity.Household;
 import com.codecool.backend.model.entity.Role;
@@ -20,8 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
@@ -81,7 +78,7 @@ public class UserEntityServiceTest {
 
         userEntity = new UserEntity();
         userEntity.setId(1L);
-        userEntity.setName("testUser");
+        userEntity.setUserName("testUser");
         userEntity.setEmail("test@gmail.com");
         userEntity.setPassword("encodedPassword");
         userEntity.setRoles(Set.of(Role.ROLE_USER));
@@ -264,12 +261,12 @@ public class UserEntityServiceTest {
         // GIVEN
         UserEntity user1 = new UserEntity();
         user1.setId(1L);
-        user1.setName("User1");
+        user1.setUserName("User1");
         user1.setEmail("user1@example.com");
 
         UserEntity user2 = new UserEntity();
         user2.setId(2L);
-        user2.setName("User2");
+        user2.setUserName("User2");
         user2.setEmail("user2@example.com");
 
         List<UserEntity> householdMembers = List.of(user1, user2);
@@ -311,12 +308,12 @@ public class UserEntityServiceTest {
         // GIVEN
         UserEntity user1 = new UserEntity();
         user1.setId(1L);
-        user1.setName("User1");
+        user1.setUserName("User1");
         user1.setEmail("user1@example.com");
 
         UserEntity user2 = new UserEntity();
         user2.setId(2L);
-        user2.setName("User2");
+        user2.setUserName("User2");
         user2.setEmail("user2@example.com");
 
         List<UserEntity> householdMembers = List.of(user1, user2);
