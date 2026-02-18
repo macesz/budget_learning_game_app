@@ -3,8 +3,6 @@ import com.codecool.backend.controller.dto.CategoryDto;
 import com.codecool.backend.controller.dto.NewTransactionDto;
 import com.codecool.backend.controller.dto.TransactionDto;
 import com.codecool.backend.controller.exception.CategoryNotFoundException;
-import com.codecool.backend.controller.exception.TransactionNotFoundException;
-import com.codecool.backend.controller.exception.UserEntityNotFoundException;
 import com.codecool.backend.model.entity.Category;
 import com.codecool.backend.model.entity.Household;
 import com.codecool.backend.model.entity.Transaction;
@@ -28,7 +26,6 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -70,7 +67,7 @@ public class TransactionServiceTest {
 
         userEntity = new UserEntity();
         userEntity.setId(1L);
-        userEntity.setName("testUser");
+        userEntity.setUserName("testUser");
         userEntity.setEmail("test@example.com");
         userEntity.setHousehold(household);
 

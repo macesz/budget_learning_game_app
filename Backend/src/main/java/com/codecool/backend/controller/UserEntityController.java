@@ -6,7 +6,6 @@ import com.codecool.backend.controller.exception.UserEntityNotFoundException;
 import com.codecool.backend.model.entity.UserEntity;
 import com.codecool.backend.security.jwt.JwtUtils;
 import com.codecool.backend.service.UserEntityService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -60,7 +58,7 @@ public class UserEntityController {
             com.codecool.backend.model.entity.UserEntity loggedUser = userEntityService.findUserByEmail(userDetails.getUsername());
 
             return ResponseEntity
-                    .ok(new JwtResponse(jwt, loggedUser.getName(), roles));
+                    .ok(new JwtResponse(jwt, loggedUser.getUserName(), roles));
         } catch (AuthenticationException e) {
             // Using a structured error response is more informative than just the exception
             return ResponseEntity
@@ -91,7 +89,7 @@ public class UserEntityController {
 
         UserEntityProfileDto profileDto = new UserEntityProfileDto(
                 currentUser.getId(),
-                currentUser.getName(),
+                currentUser.getUserName(),
                 currentUser.getEmail(),
                 currentUser.getTargetAmount()
         );

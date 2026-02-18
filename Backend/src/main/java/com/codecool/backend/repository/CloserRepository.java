@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface CloserRepository extends JpaRepository<Closer, Long> {
-    List<Closer> findAllById(Long userId);
     Closer findFirstByHouseholdIdAndDateLessThanEqualOrderByDateDesc(Long householdId, LocalDate balanceDate);
     List<Closer> findByHouseholdIdOrderByDateDesc(Long householdId);
     Closer findFirstByHouseholdIdOrderByDateDesc(Long householdId);

@@ -2,11 +2,9 @@ package com.codecool.backend.service;
 
 import com.codecool.backend.model.entity.Household;
 import com.codecool.backend.repository.HouseholdRepository;
-import com.codecool.backend.repository.TransactionRepository;
-import com.codecool.backend.repository.UserEntityRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,7 +28,29 @@ public class HouseHoldService {
     public Household createHousehold(Long householdId) {
         return householdRepository.save(new Household(householdId));
     }
-    public Household createHousehold() {
-        return householdRepository.save(new Household());
+    public Household createHousehold(String defaultName) {
+        Household household = new Household();
+        household.setHouseName(defaultName);
+        return householdRepository.save(household);
+    }
+
+    public Optional<Household> findHouseholdByName(String houseName){
+        return householdRepository.findByNameIgnoreCase(houseName);
+    }
+
+    public List<Household> searchHouseholdsByName(String searchTerm) {
+        return householdRepository.findByNameContainingIgnoreCase(searchTerm);
+    }
+
+    public List<Household> getAllHouseholds() {
+        return householdRepository.findAll();
+    }
+
+    public Optional<Household> updateHouseholdName(Long id, String newName) {
+        return householdRepository.findHouseholdById(id)
+                .map(household -> {
+                    household.setHouseName(newName);
+                    return householdRepository.save(household);
+                });
     }
 }

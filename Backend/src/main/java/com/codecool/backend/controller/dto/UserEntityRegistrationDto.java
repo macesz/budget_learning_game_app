@@ -10,7 +10,13 @@ import java.time.LocalDate;
 
 public record UserEntityRegistrationDto(@NotBlank(message = "Name is required")
                                         @JsonAlias("username")
-                                        String name,
+                                        String userName,
+
+                                        @NotBlank(message = "First name is required")
+                                        String firstName,
+
+                                        @NotBlank(message = "Last name is required")
+                                        String lastName,
 
                                         @NotBlank(message = "Email is required")
                                         @Email(message = "Email should be valid")

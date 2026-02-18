@@ -17,7 +17,9 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "seq")
     private Long id;
-    private String name;
+    private String userName;
+    private String FirstName;
+    private String LastName;
     @Column(unique = true)
     private String email;
     private String password;
@@ -33,6 +35,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "userEntity")
     private Set<Transaction> transactions;
 
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
+    private Pet pet;
+
     @ManyToOne
     @JoinColumn(name = "house_id")
     private Household household;
@@ -41,18 +46,18 @@ public class UserEntity {
     }
 
     public UserEntity(String name) {
-        this.name = name;
+        this.userName = name;
     }
 
     public UserEntity(UserEntityRegistrationDto userEntityRegistrationDto) {
-        name = userEntityRegistrationDto.name();
+        userName = userEntityRegistrationDto.userName();
         email = userEntityRegistrationDto.email();
         password = userEntityRegistrationDto.password();
     }
 
     public UserEntity(UserEntityDto userEntityDto) {
         id = userEntityDto.id();
-        name = userEntityDto.name();
+        userName = userEntityDto.name();
         email = userEntityDto.email();
     }
 
@@ -60,7 +65,7 @@ public class UserEntity {
     public String toString() {
         return "Member{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + userName + '\'' +
                 ", email='" + email + '\'' +
                 "}";
     }
@@ -71,13 +76,13 @@ public class UserEntity {
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity member = (UserEntity) o;
         return id.equals(member.id)
-                && Objects.equals(name, member.name)
+                && Objects.equals(userName, member.userName)
                 && Objects.equals(email, member.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email);
+        return Objects.hash(id, userName, email);
     }
 
 }
